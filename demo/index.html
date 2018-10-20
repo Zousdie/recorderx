@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <audio autoplay controls id="audio"></audio>
+  <audio autoplay id="audio-real"></audio>
+  <div>
+    <button id="btn-start">start</button>
+    <button id="btn-pause">pause</button>
+    <button id="btn-stop">stop and clear</button>
+  </div>
+  <div id="log" style="max-height:400px;margin-top:10px;overflow-y:scroll;"></div>
+</body>
+<script src="index.js"></script>
+<script>
+  (function () {
+    var rc;
+    var btnStart = document.getElementById('btn-start');
+    var btnPause = document.getElementById('btn-pause');
+    var btnStop = document.getElementById('btn-stop');
+
+    var dlog = document.getElementById('log');
+    var audio = document.getElementById('audio');
+    var audioReal = document.getElementById('audio-real');
+
+    var Recorder = window.Recorder.default;
+    var RecorderState = window.Recorder.RecorderState;
+
+    btnStart.addEventListener('click', function () {
+      if (!rc) {
+        rc = new Recorder(true)
+      }
+      if (rc.state === RecorderState.READY) {
+        rc.start()
+          .then(stream => {
+            audioReal.srcObject = stream;
+            pushLog('start recording');
+          })
+          .catch(error => {
+            pushLog('Recording failed.', error);
+          });
+      }
+    });
+
+    btnPause.addEventListener('click', function () {
+      if (rc && rc.state === RecorderState.RECORDING) {
+        rc.pause();
+        audio.src = rc.getRecordWav();
+        pushLog('pause recording');
+      }
+    });
+
+    btnStop.addEventListener('click', function () {
+      if (rc) {
+        rc.close();
+        rc = undefined;
+        pushLog('stop recording and destroy Recorder');
+      }
+    });
+
+    function pushLog(log, error = '') {
+      var xlog =
+        `<span style="margin-right:8px">
+           ${(new Date()).toLocaleString()}:
+         </span>
+         <span style="color:${error ? 'red' : 'blue'}">
+           ${log} ${error}
+         </span>`
+      var dl = document.createElement('div');
+      dl.innerHTML = xlog;
+      dlog.appendChild(dl);
+    }
+  })()
+</script>
+
+</html>

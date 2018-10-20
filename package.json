@@ -1,0 +1,38 @@
+{
+  "name": "recorderx",
+  "version": "0.1.1",
+  "description": "Record and export audio in the browser via WebRTC api",
+  "author": "Jialiang T. (rememhe@outlook.com)",
+  "keywords": [
+    "audio",
+    "recording",
+    "WebRTC"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zousdie/recorderx.git"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "prepare": "npm run build"
+  },
+  "main": "dist/index.js",
+  "module": "esm/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-eslint": "^8.2.6",
+    "eslint": "^4.15.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-buble": "^0.18.0",
+    "rollup-plugin-uglify": "^2.0.1"
+  }
+}
