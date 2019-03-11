@@ -1,28 +1,33 @@
-import buble from 'rollup-plugin-buble'
-import uglify from 'rollup-plugin-uglify'
-import babel from 'rollup-plugin-babel'
+import buble from 'rollup-plugin-buble';
+import { uglify } from 'rollup-plugin-uglify';
+import babel from 'rollup-plugin-babel';
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/main.js',
     output: {
       file: 'dist/index.js',
       format: 'umd',
-      name: 'Recorder'
+      name: 'Recorderx',
+      exports: 'named',
     },
-    plugins: [buble(), uglify()]
+    plugins: [
+      buble(),
+      uglify(),
+    ],
   },
+
   {
-    input: 'src/index.js',
+    input: 'src/main.js',
     output: {
       file: 'esm/index.js',
-      format: 'es'
+      format: 'es',
     },
     plugins: [
       babel({
         exclude: 'node_modules/**',
-        externalHelpers: false
-      })
-    ]
-  }
-]
+        runtimeHelpers: true,
+      }),
+    ],
+  },
+];
