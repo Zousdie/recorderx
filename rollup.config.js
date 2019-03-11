@@ -13,6 +13,19 @@ export default [
     },
     plugins: [
       buble(),
+    ],
+  },
+
+  {
+    input: 'src/main.js',
+    output: {
+      file: 'dist/recorderx.min.js',
+      format: 'umd',
+      name: 'Recorderx',
+      exports: 'named',
+    },
+    plugins: [
+      buble(),
       uglify(),
     ],
   },

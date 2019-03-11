@@ -1,5 +1,4 @@
 export default function environmentCheck () {
-  // node environment
   if (window === undefined || navigator === undefined) {
     return;
   }

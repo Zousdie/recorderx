@@ -2,7 +2,9 @@ import environmentCheck from './polyfill';
 import defaultConfig from './config';
 import RecorderState from './state';
 import {
-  merge, compress, encodeWAV, A,
+  merge,
+  compress,
+  encodeWAV,
 } from './andioProcess';
 
 const state = Symbol('state');
@@ -135,4 +137,3 @@ class Recorderx {
 environmentCheck();
 
 export default Recorderx;
-export { A };

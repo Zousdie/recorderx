@@ -101,5 +101,3 @@ export function encodeWAV (bytes, sampleBits, sampleRate) {
 
   return new Blob([data], { type: 'audio/wav' });
 }
-
-export class A { }
