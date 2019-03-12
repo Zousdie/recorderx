@@ -5,7 +5,9 @@
 
 export function merge (list, size) {
   const data = new Float32Array(size);
+
   let offset = 0;
+
   for (let i = 0; i < list.length; i += 1) {
     data.set(list[i], offset);
     offset += list[i].length;
@@ -22,6 +24,7 @@ export function compress (data, inputSampleRate, outSampleRate) {
 
   let index = 0;
   let j = 0;
+
   while (index < length) {
     resultBuffer[index] = buffer[j];
     j += compression;

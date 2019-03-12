@@ -1,24 +1,24 @@
-import environmentCheck from './polyfill';
-import defaultConfig from './config';
-import RecorderState from './state';
 import {
   merge,
   compress,
   encodeWAV,
-} from './andioProcess';
+} from './tools';
+import environmentCheck from './polyfill';
+import DEFAULT_CONFIG from './config';
+import RECORDER_STATE from './state';
 
-const state = Symbol('state');
+const state = '_state';
 
 class Recorderx {
   constructor (
     {
-      recordable = defaultConfig.recordable,
-      sampleRate = defaultConfig.sampleRate,
-      sampleBits = defaultConfig.sampleBits,
-      bufferSize = defaultConfig.bufferSize,
-      numberOfInputChannels = defaultConfig.numberOfInputChannels,
-      numberOfOutputChannels = defaultConfig.numberOfOutputChannels,
-    } = defaultConfig,
+      recordable = DEFAULT_CONFIG.recordable,
+      sampleRate = DEFAULT_CONFIG.sampleRate,
+      sampleBits = DEFAULT_CONFIG.sampleBits,
+      bufferSize = DEFAULT_CONFIG.bufferSize,
+      numberOfInputChannels = DEFAULT_CONFIG.numberOfInputChannels,
+      numberOfOutputChannels = DEFAULT_CONFIG.numberOfOutputChannels,
+    } = DEFAULT_CONFIG,
   ) {
     this.recordable = recordable;
     this.sampleRate = sampleRate;
@@ -37,7 +37,7 @@ class Recorderx {
     }
 
     this.stream = undefined;
-    this[state] = RecorderState.READY;
+    this[state] = RECORDER_STATE.READY;
   }
 
   get state () {
@@ -74,7 +74,7 @@ class Recorderx {
               audioprocessCallback({ data, result, wav });
             }
           };
-          this[state] = RecorderState.RECORDING;
+          this[state] = RECORDER_STATE.RECORDING;
           resolve(stream);
         })
         .catch((error) => {
@@ -84,13 +84,13 @@ class Recorderx {
   }
 
   pause () {
-    this[state] = RecorderState.READY;
+    this[state] = RECORDER_STATE.READY;
     this.recorder.disconnect();
     this.stream.getAudioTracks()[0].stop();
   }
 
   close () {
-    this[state] = RecorderState.DESTROYED;
+    this[state] = RECORDER_STATE.DESTROYED;
     this.pause();
     this.clear();
 
@@ -98,8 +98,8 @@ class Recorderx {
   }
 
   getRecord ({
-    compressable = false,
     encodeTo = undefined,
+    compressable = false,
   } = {
     compressable: false,
     encodeTo: undefined,
@@ -107,7 +107,7 @@ class Recorderx {
     if (this.recordable) {
       let buffer = merge(this.xBuffer, this.xSize);
 
-      if (compressable) {
+      if (encodeTo === 'wav' || compressable) {
         buffer = compress(buffer, this.audioContext.sampleRate, this.sampleRate);
       }
 
@@ -136,4 +136,10 @@ class Recorderx {
 
 environmentCheck();
 
+export const tools = {
+  merge,
+  compress,
+  encodeWAV,
+};
+export { RECORDER_STATE };
 export default Recorderx;
