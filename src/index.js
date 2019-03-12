@@ -136,7 +136,7 @@ class Recorderx {
 
 environmentCheck();
 
-export const tools = {
+export const audioTools = {
   merge,
   compress,
   encodeWAV,
