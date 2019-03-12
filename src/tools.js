@@ -1,8 +1,3 @@
-/**
- * Audio merge, compress and encode
- * reference from: https://github.com/silenceboychen/recording.git
- */
-
 export function merge (list, size) {
   const data = new Float32Array(size);
 

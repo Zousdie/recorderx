@@ -1,5 +1,8 @@
-export interface RECORDER_STATE {
-  readonly READY: number;
-  readonly RECORDING: number;
-  readonly DESTROYED: number;
+/**
+ * Recorder State.
+ */
+export enum RECORDER_STATE {
+  READY,
+  RECORDING,
+  DESTROYED,
 }

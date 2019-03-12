@@ -1,14 +1,7 @@
-import { Recorderx } from './recorderx';
-import { merge, compress, encodeWAV } from './tools';
+import Recorderx from './recorderx';
 
-export default Recorderx;
-
-export as namespace Recorderx;
-
-export interface tool {
-  merge: merge;
-  compress: compress;
-  encodeWAV: encodeWAV;
-}
+export { audioTools } from './tools';
 
 export { RECORDER_STATE } from './state';
+
+export default Recorderx;
