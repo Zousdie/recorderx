@@ -1,30 +1,14 @@
-interface RecorderxConstructorParams {
-  recordable: boolean;
-  sampleRate: number;
-  sampleBits: number;
-  bufferSize: number;
-  numberOfInputChannels: number;
-  numberOfOutputChannels: number;
+import { Recorderx } from './recorderx';
+import { merge, compress, encodeWAV } from './tools';
+
+export default Recorderx;
+
+export as namespace Recorderx;
+
+export interface tool {
+  merge: merge;
+  compress: compress;
+  encodeWAV: encodeWAV;
 }
 
-interface audioprocessCallbackParams {
-  data: Float32Array;
-  result: Float32Array;
-  wav: Blob;
-}
-
-type audioprocessCallback = (callback: audioprocessCallbackParams) => void;
-
-export class Recorderx {
-  constructor(options: RecorderxConstructorParams);
-
-  start: (audioprocessCallback: audioprocessCallback) => Promise<any>;
-
-  pause(): void;
-
-  close(): Primise<any>;
-
-  getRecord(): Float32Array | Blob | null;
-
-  clear(): void;
-}
+export { RECORDER_STATE } from './state';
