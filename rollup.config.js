@@ -1,23 +1,44 @@
+import babel from 'rollup-plugin-babel';
 import buble from 'rollup-plugin-buble';
 import { uglify } from 'rollup-plugin-uglify';
-import babel from 'rollup-plugin-babel';
+import { eslint } from 'rollup-plugin-eslint';
+import html from 'rollup-plugin-fill-html';
+
+const eslintPlugin = eslint({
+  throwOnError: true,
+  throwOnWarning: false,
+  include: ['src/**'],
+  exclude: ['node_modules/**'],
+});
 
 export default [
   {
-    input: 'src/main.js',
-    output: {
-      file: 'dist/index.js',
-      format: 'umd',
-      name: 'Recorderx',
-      exports: 'named',
-    },
-    plugins: [
-      buble(),
+    input: 'src/index.js',
+    output: [
+      {
+        file: 'esm/index.js',
+        format: 'es',
+      },
+      {
+        file: 'lib/index.js',
+        format: 'cjs',
+        exports: 'named',
+      },
     ],
+    plugins: [
+      eslintPlugin,
+      babel({
+        exclude: 'node_modules/**',
+        runtimeHelpers: true,
+      }),
+    ],
+    external (id) {
+      return /@babel\/runtime/.test(id);
+    },
   },
 
   {
-    input: 'src/main.js',
+    input: 'src/index.js',
     output: {
       file: 'dist/recorderx.min.js',
       format: 'umd',
@@ -25,21 +46,27 @@ export default [
       exports: 'named',
     },
     plugins: [
+      eslintPlugin,
       buble(),
       uglify(),
     ],
   },
 
   {
-    input: 'src/main.js',
+    input: 'public/index.js',
     output: {
-      file: 'esm/index.js',
-      format: 'es',
+      file: 'demo/recorderx.min.js',
+      format: 'umd',
+      name: 'Recorderx',
+      exports: 'named',
     },
     plugins: [
-      babel({
-        exclude: 'node_modules/**',
-        runtimeHelpers: true,
+      eslintPlugin,
+      buble(),
+      uglify(),
+      html({
+        template: 'public/index.html',
+        filename: 'index.html',
       }),
     ],
   },

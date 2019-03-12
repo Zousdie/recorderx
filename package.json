@@ -15,11 +15,18 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "prebuild": "rm -rf dist & rm -rf esm"
+    "prebuild": "rm -rf dist & rm -rf lib & rm -rf esm & rm -rf demo"
   },
   "main": "dist/index.js",
   "module": "esm/index.js",
   "typings": "types/index.d.ts",
+  "files": [
+    "dist",
+    "esm",
+    "lib",
+    "types",
+    "demo"
+  ],
   "dependencies": {
     "@babel/runtime": "^7.3.4"
   },
@@ -34,6 +41,8 @@
     "rollup": "^1.6.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-buble": "^0.19.6",
+    "rollup-plugin-eslint": "^5.0.0",
+    "rollup-plugin-fill-html": "^1.1.0",
     "rollup-plugin-uglify": "^6.0.2"
   }
 }

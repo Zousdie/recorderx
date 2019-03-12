@@ -1,6 +1,7 @@
 node_modules
 dist
 esm
+lib
 .DS_Store
 .vscode
 .idea
