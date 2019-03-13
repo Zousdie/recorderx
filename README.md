@@ -4,126 +4,167 @@ Record and export audio in the browser via WebRTC api.
 
 Support output wav and pcm format.
 
+## Check your browser
+
+[Demo](https://zousdie.github.io/recorderx/demo/)
+
 ## Install
 
-npm install recorderx -S
+### NPM
+
+```shell
+npm install recorderx --sava
+```
+
+### Yarn
+
+```shell
+yarn add recorderx
+```
 
 ## Quick Start
 
-```
-import Recorder from 'recorderx'
+```javascript
+import Recorderx from "recorderx";
 
-const rc = new Recorder(true)
+const rc = new Recorderx({
+  recordable: true
+});
 
-const audio = new Audio()
-audio.autoplay = true
+const audio = new Audio();
+audio.autoplay = true;
 
 rc.start()
   .then(stream => {
-    audio.srcObject = stream
+    audio.srcObject = stream;
   })
-  .catch(error => alert(error))
+  .catch(error => {
+    //
+  });
 ```
 
 ## Usage
 
 ### Constructor
 
-```
-const rc = new Recorder([recordable][, config])
+```javascript
+const rc = new Recorderx([options]);
 ```
 
-Creates a recorder instance.
+Creates a recorderx instance.
 
-- recordable: (optional)
-  - default to `false`
-  - Whether to support continuous recording, `true` is supported, `false` is not supported.
-  - If you want to continue recording a piece of audio, please use `true`
-- config: (optional)
-  - Recording configuration object.
-    - sampleRate - Wav sampling rate, default to `16000`
-    - sampleBits - Wav sampling bits, default to `16`
-    - bufferSize - AudioContext buffer size, default to `16384`. Optional value: `256`, `512`, `1024`, `2048`, `4096`, `8192` or `16384`
+- `recordable: boolean`
+
+  Whether to support continuous recording, default to `false`.
+
+  If you want to record a piece of audio, please use `true`.
+
+- `sampleRate: number`
+
+  Wav sampling rate, default to `16000`.
+
+- `sampleBits: number`
+
+  Wav sampling bits, default to `16`.
+
+- `bufferSize: number`
+
+  The buffer size in units of sample-frames, default to `16384`.
+
+  If specified, the bufferSize must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384.
+
+- `numberOfInputChannels: number`
+
+  Integer specifying the number of channels for this node's input, defaults to 1.
+
+  Values of up to 32 are supported.
+
+- `numberOfOutputChannels: number`
+
+  Integer specifying the number of channels for this node's output, defaults to 1.
+
+  Values of up to 32 are supported.
 
 ### Property
 
 #### state
 
-Recording status:
+Recording status, an enum:
 
-- READY: 'ready'
-- RECORDING: 'recording'
-- DESTROYED: 'destroyed'
+- READY: 0
 
-```
-import { RecorderState } from 'recorderx'
+- RECORDING: 1
 
-if (rc.state === RecorderState.READY) {
-  ...
+- DESTROYED: 2
+
+```javascript
+import { RECORDER_STATE } from "recorderx";
+
+if (rc.state === RECORDER_STATE.READY) {
+  //
 }
 ```
 
 ### Methods
 
-#### start([audioprocessCallback])
+#### start([callback])
 
-Start recording, return a Promise, and the promise return the media stream source
+Start recording, return a Promise, and the promise return the media stream source.
 
-- audioprocessCallback: (optional)
-  - Callback function for onaudioprocess event.
-  - Parameter is an object:
-    - wav: Wav format audio data in the current buffer
-    - result: Pcm format audio data in the current buffer, compressed
-    - data: Raw pcm format data in current buffer
-
-```
+```javascript
 rc.start(({ wav, result, data }) => {
   ...
 })
-  .then(stream => {
+  .then((stream) => {
     audio.srcObject = stream;
-  })
+  });
 ```
 
-#### pause()
+- callback (optional)
 
-Pause recording
+  Callback function for onaudioprocess event.
 
+- callback parameter is an object:
+
+  - data: Raw pcm format data in current buffer.
+
+  - result: Pcm format audio data in the current buffer, compressed.
+
+  - wav: Wav format audio data in the current buffer.
+
+#### pause
+
+Pause recording.
+
+#### close
+
+Stop recording and turn off the audio context.
+
+This method is equivalent to destroying the current Recorder instance.
+
+#### clear
+
+Clear recording buffer.
+
+#### getRecord(options)
+
+Get recording data.
+
+```javascript
+rc.getRecord({ encodeTo: "wav" });
 ```
-rc.pause()
-```
 
-#### close()
+- options (optional)
 
-Stop recording and destory the Recorder instance, if `recordable` is `true`, all cached recordings will be cleared
+  Options object
 
-```
-rc.close()
-```
+  - encodeTo
 
-#### getRecord
+    String 'wav' or a function for processing audio data.
 
-Get a recording in pcm format.
+  - compressable
 
-```
-rc.getRecord()
-```
-
-#### getRecordWav
-
-Get a recording in wav format.
-
-```
-rc.getRecordWav()
-```
-
-#### clearRecord
-
-Clear recording.
-
-```
-rc.clearRecord()
-```
+    Whether to compress. Force compression on wav format.
 
 ## Browser Support
 
@@ -137,4 +178,4 @@ MIT
 
 ## Else
 
-Audio compression and conversion to wav method reference from [recording](https://github.com/silenceboychen/recording.git)
+Audio compression and conversion to wav method reference from [recording](https://github.com/silenceboychen/recording.git).
