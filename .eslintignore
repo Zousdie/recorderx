@@ -1,7 +1,6 @@
+node_modules
 dist
 esm
 lib
-node_modules
-demo
 types
-public/index.html
+examples/index.html

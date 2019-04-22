@@ -1,8 +1,9 @@
+build
 node_modules
+examples
 src
 .DS_Store
 .editorconfig
 .eslintignore
 .eslintrc
 .gitignore
-rollup.config.js

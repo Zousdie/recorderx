@@ -14,10 +14,12 @@
     "url": "https://github.com/Zousdie/recorderx.git"
   },
   "scripts": {
-    "build": "rollup -c --environment NODE_ENV:production",
-    "prebuild": "rm -rf dist & rm -rf lib & rm -rf esm & rm -rf demo",
-    "prepublish": "npm run build",
-    "dev": "rollup -c --environment NODE_ENV:development --watch"
+    "dev": "rollup -c build/rollup.dev.js --environment NODE_ENV:development,BABEL_MODULE:umd --watch",
+    "build:lib": "rollup -c build/rollup.config.js --environment NODE_ENV:production",
+    "build:umd": "rollup -c build/rollup.config.js --environment NODE_ENV:production,BABEL_MODULE:umd",
+    "build": "npm run build:lib && npm run build:umd",
+    "prebuild": "rm -rf dist & rm -rf lib & rm -rf esm",
+    "prepublish": "npm run build"
   },
   "main": "lib/index.js",
   "module": "esm/index.js",
@@ -29,11 +31,13 @@
     "types",
     "demo"
   ],
+  "sideEffects": false,
   "dependencies": {
     "@babel/runtime": "^7.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "babel-eslint": "^10.0.1",
