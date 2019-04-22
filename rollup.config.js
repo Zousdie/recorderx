@@ -3,6 +3,8 @@ import buble from 'rollup-plugin-buble';
 import { uglify } from 'rollup-plugin-uglify';
 import { eslint } from 'rollup-plugin-eslint';
 import html from 'rollup-plugin-fill-html';
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
 
 const eslintPlugin = eslint({
   throwOnError: true,
@@ -55,10 +57,11 @@ export default [
   {
     input: 'public/index.js',
     output: {
-      file: 'demo/recorderx.min.js',
+      file: 'demo/demo.min.js',
       format: 'umd',
       name: 'Recorderx',
       exports: 'named',
+      sourcemap: true,
     },
     plugins: [
       eslintPlugin,
@@ -68,6 +71,8 @@ export default [
         template: 'public/index.html',
         filename: 'index.html',
       }),
+      serve('demo'),
+      livereload(),
     ],
   },
 ];
