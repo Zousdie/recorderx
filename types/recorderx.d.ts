@@ -39,15 +39,15 @@ export default interface Recorderx {
   /**
    * Get RAW recording data.
    */
-  getRecord ({ encodeTo, compressable }?: { encodeTo?: ENCODE_TYPE, compressable?: boolean }): Float32Array;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Float32Array;
 
   /**
    * Get PCM recording data.
    */
-  getRecord ({ encodeTo, compressable }?: { encodeTo?: ENCODE_TYPE, compressable?: boolean }): ArrayBuffer;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): ArrayBuffer;
 
   /**
    * Get WAV recording data.
    */
-  getRecord ({ encodeTo, compressable }?: { encodeTo?: ENCODE_TYPE, compressable?: boolean }): Blob;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Blob;
 }

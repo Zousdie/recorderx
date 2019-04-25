@@ -43,12 +43,9 @@ btnPause.addEventListener('click', () => {
     rc.pause();
     audio.src = URL.createObjectURL(rc.getRecord({
       encodeTo: ENCODE_TYPE.WAV,
-      compressable: true,
+      compressible: true,
     }));
     pushLog('pause recording');
-
-    console.log(rc.getRecord({ encodeTo: ENCODE_TYPE.RAW }));
-    console.log(rc.getRecord({ encodeTo: ENCODE_TYPE.PCM }));
   }
 });
 

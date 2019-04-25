@@ -99,19 +99,19 @@ class Recorderx {
 
   getRecord ({
     encodeTo = ENCODE_TYPE.RAW,
-    compressable = false,
+    compressible = false,
   } = {
     encodeTo: ENCODE_TYPE.RAW,
-    compressable: false,
+    compressible: false,
   }) {
     if (this.recordable) {
       let buffer = merge(this.buffer, this.bufferSize);
 
       const inputSampleRate = this.ctx.sampleRate;
-      compressable = compressable && (this.sampleRate < inputSampleRate);
-      const outSampleRate = compressable ? this.sampleRate : inputSampleRate;
+      compressible = compressible && (this.sampleRate < inputSampleRate);
+      const outSampleRate = compressible ? this.sampleRate : inputSampleRate;
 
-      if (compressable) {
+      if (compressible) {
         buffer = compress(buffer, inputSampleRate, outSampleRate);
       }
 
