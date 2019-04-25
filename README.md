@@ -12,7 +12,7 @@ English | [简体中文](./README-zh_CN.md)
 
 ## Check your browser
 
-[Demo](https://zousdie.github.io/recorderx/demo/)
+[Demo](https://zousdie.github.io/recorderx/dist/)
 
 ## Install
 

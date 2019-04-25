@@ -12,7 +12,7 @@
 
 ## 检查你的浏览器是否支持录音
 
-[Demo](https://zousdie.github.io/recorderx/demo/)
+[Demo](https://zousdie.github.io/recorderx/dist/)
 
 ## 安装
 
