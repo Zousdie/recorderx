@@ -8,6 +8,8 @@ git pull
 
 git checkout master
 
+git pull
+
 git merge dev
 
 echo "Enter release version: "
