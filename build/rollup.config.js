@@ -23,9 +23,7 @@ const config = BABEL_MODULE === 'umd' ? [
     },
     plugins: [
       eslintPlugin,
-      babel({
-        exclude: 'node_modules/**',
-      }),
+      babel(),
       uglify(),
     ],
   },
@@ -40,9 +38,7 @@ const config = BABEL_MODULE === 'umd' ? [
     },
     plugins: [
       eslintPlugin,
-      babel({
-        exclude: 'node_modules/**',
-      }),
+      babel(),
       uglify(),
       html({
         template: 'examples/index.html',
