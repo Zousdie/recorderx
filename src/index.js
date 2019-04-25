@@ -1,80 +1,81 @@
 import {
   merge,
   compress,
-  encodeWAV,
+  encodeToPCM,
+  encodeToWAV,
 } from './tools';
 import environmentCheck from './polyfill';
 import DEFAULT_CONFIG from './config';
-import RECORDER_STATE from './state';
-
-const state = '_state';
+import { RECORDER_STATE, ENCODE_TYPE } from './enum';
 
 class Recorderx {
+  state = RECORDER_STATE.READY
+
+  ctx = new (window.AudioContext || window.webkitAudioContext)()
+
+  sampleRate = DEFAULT_CONFIG.sampleRate
+
+  sampleBits = DEFAULT_CONFIG.sampleBits
+
+  recordable = DEFAULT_CONFIG.recordable
+
+  recorder = null
+
+  source = null
+
+  stream = null
+
+  buffer = []
+
+  bufferSize = 0
+
   constructor (
     {
       recordable = DEFAULT_CONFIG.recordable,
+      bufferSize = DEFAULT_CONFIG.bufferSize,
       sampleRate = DEFAULT_CONFIG.sampleRate,
       sampleBits = DEFAULT_CONFIG.sampleBits,
-      bufferSize = DEFAULT_CONFIG.bufferSize,
-      numberOfInputChannels = DEFAULT_CONFIG.numberOfInputChannels,
-      numberOfOutputChannels = DEFAULT_CONFIG.numberOfOutputChannels,
     } = DEFAULT_CONFIG,
   ) {
+    const { ctx } = this;
+    const creator = ctx.createScriptProcessor || ctx.createJavaScriptNode;
+    this.recorder = creator.call(ctx, bufferSize, 1, 1);
     this.recordable = recordable;
     this.sampleRate = sampleRate;
     this.sampleBits = sampleBits;
-
-    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    this.recorder = this.audioContext.createScriptProcessor(
-      bufferSize,
-      numberOfInputChannels,
-      numberOfOutputChannels,
-    );
-
-    if (recordable) {
-      this.xBuffer = [];
-      this.xSize = 0;
-    }
-
-    this.stream = undefined;
-    this[state] = RECORDER_STATE.READY;
-  }
-
-  get state () {
-    return this[state];
   }
 
   start (audioprocessCallback) {
+    this.ctx.resume();
+
     return new Promise((resolve, reject) => {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
+          const { recorder } = this;
+          const source = this.ctx.createMediaStreamSource(stream);
+
           this.stream = stream;
-          const source = this.audioContext.createMediaStreamSource(stream);
+          this.source = source;
 
-          source.connect(this.recorder);
-          this.recorder.connect(this.audioContext.destination);
-
-          this.recorder.onaudioprocess = (e) => {
-            const data = e.inputBuffer.getChannelData(0);
+          recorder.onaudioprocess = (e) => {
+            const channelData = e.inputBuffer.getChannelData(0);
 
             if (this.recordable) {
-              this.xBuffer.push(new Float32Array(data));
-              this.xSize += data.length;
+              this.buffer.push(channelData.slice(0));
+              this.bufferSize += channelData.length;
             }
 
-            const result = compress(
-              data,
-              this.audioContext.sampleRate,
-              this.sampleRate,
-            );
-            const wav = encodeWAV(result, this.sampleBits, this.sampleRate);
-
-            if (audioprocessCallback) {
-              audioprocessCallback({ data, result, wav });
+            if (typeof audioprocessCallback === 'function') {
+              audioprocessCallback(channelData);
             }
           };
-          this[state] = RECORDER_STATE.RECORDING;
+
+          source.connect(recorder);
+          recorder.connect(this.ctx.destination);
+
+          this.state = RECORDER_STATE.RECORDING;
+
           resolve(stream);
         })
         .catch((error) => {
@@ -84,53 +85,49 @@ class Recorderx {
   }
 
   pause () {
-    this[state] = RECORDER_STATE.READY;
-    this.recorder.disconnect();
     this.stream.getAudioTracks()[0].stop();
-  }
-
-  close () {
-    this[state] = RECORDER_STATE.DESTROYED;
-    this.pause();
-    this.clear();
-
-    return this.audioContext.close();
-  }
-
-  getRecord ({
-    encodeTo = undefined,
-    compressable = false,
-  } = {
-    compressable: false,
-    encodeTo: undefined,
-  }) {
-    if (this.recordable) {
-      let buffer = merge(this.xBuffer, this.xSize);
-
-      if (encodeTo === 'wav' || compressable) {
-        buffer = compress(buffer, this.audioContext.sampleRate, this.sampleRate);
-      }
-
-      if (typeof encodeTo === 'function') {
-        buffer = encodeTo(buffer, {
-          sampleBits: this.sampleBits,
-          sampleRate: this.sampleRate,
-        });
-      } else if (encodeTo === 'wav') {
-        buffer = encodeWAV(buffer, this.sampleBits, this.sampleRate);
-      }
-
-      return buffer;
-    }
-
-    return null;
+    this.recorder.disconnect();
+    this.source.disconnect();
+    this.ctx.suspend();
+    this.state = RECORDER_STATE.READY;
   }
 
   clear () {
+    this.buffer = [];
+    this.bufferSize = 0;
+  }
+
+  getRecord ({
+    encodeTo = ENCODE_TYPE.RAW,
+    compressible = false,
+  } = {
+    encodeTo: ENCODE_TYPE.RAW,
+    compressible: false,
+  }) {
     if (this.recordable) {
-      this.xBuffer = [];
-      this.xSize = 0;
+      let buffer = merge(this.buffer, this.bufferSize);
+
+      const inputSampleRate = this.ctx.sampleRate;
+      compressible = compressible && (this.sampleRate < inputSampleRate);
+      const outSampleRate = compressible ? this.sampleRate : inputSampleRate;
+
+      if (compressible) {
+        buffer = compress(buffer, inputSampleRate, outSampleRate);
+      }
+
+      switch (encodeTo) {
+        case ENCODE_TYPE.RAW:
+          return buffer;
+        case ENCODE_TYPE.PCM:
+          return encodeToPCM(buffer, this.sampleBits);
+        case ENCODE_TYPE.WAV:
+          return encodeToWAV(buffer, this.sampleBits, outSampleRate);
+        default:
+          throw new Error('Invalid parameter: "encodeTo" must be ENCODE_TYPE');
+      }
     }
+
+    throw new Error('Configuration error: "recordable" must be set to true');
   }
 }
 
@@ -139,7 +136,8 @@ environmentCheck();
 export const audioTools = {
   merge,
   compress,
-  encodeWAV,
+  encodeToPCM,
+  encodeToWAV,
 };
-export { RECORDER_STATE };
+export { RECORDER_STATE, ENCODE_TYPE };
 export default Recorderx;

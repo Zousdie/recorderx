@@ -1,11 +1,10 @@
-import Recorderx, { RECORDER_STATE } from '../src/index';
+import Recorderx, { RECORDER_STATE, ENCODE_TYPE } from '../src/index';
 
 const btnStart = document.getElementById('btn-start');
 const btnPause = document.getElementById('btn-pause');
-const btnStop = document.getElementById('btn-stop');
+const btnClear = document.getElementById('btn-clear');
 const dlog = document.getElementById('log');
 const audio = document.getElementById('audio');
-const audioReal = document.getElementById('audio-real');
 
 function pushLog (log, error = '') {
   const xlog = `<span style="margin-right:8px">
@@ -25,12 +24,12 @@ btnStart.addEventListener('click', () => {
   if (!rc) {
     rc = new Recorderx({
       recordable: true,
+      sampleRate: 16000,
     });
   }
   if (rc.state === RECORDER_STATE.READY) {
     rc.start()
-      .then((stream) => {
-        audioReal.srcObject = stream;
+      .then(() => {
         pushLog('start recording');
       })
       .catch((error) => {
@@ -43,16 +42,13 @@ btnPause.addEventListener('click', () => {
   if (rc && rc.state === RECORDER_STATE.RECORDING) {
     rc.pause();
     audio.src = URL.createObjectURL(rc.getRecord({
-      encodeTo: 'wav',
+      encodeTo: ENCODE_TYPE.WAV,
+      compressible: true,
     }));
     pushLog('pause recording');
   }
 });
 
-btnStop.addEventListener('click', () => {
-  if (rc) {
-    rc.close();
-    rc = undefined;
-    pushLog('stop recording and destroy Recorder');
-  }
+btnClear.addEventListener('click', () => {
+  rc.clear();
 });

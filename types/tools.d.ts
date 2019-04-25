@@ -1,29 +1,34 @@
 /**
  * Audio merge, compress and encode.
- *
- * Reference from: https://github.com/silenceboychen/recording.git
  */
 export namespace audioTools {
   /**
    * Merge audio data.
-   * @param list
-   * @param size
+   * @param bufferList
+   * @param length
    */
-  function merge(list: Array<Float32Array>, size: number): Float32Array;
+  function merge (bufferList: Array<Float32Array>, size: number): Float32Array;
 
   /**
    * Compression audio data.
-   * @param data
+   * @param buffer
    * @param inputSampleRate
-   * @param outSampleRate
+   * @param outputSampleRate
    */
-  function compress(data: Float32Array, inputSampleRate: number, outSampleRate: number): Float32Array;
+  function compress (buffer: Float32Array, inputSampleRate: number, outputSampleRate: number): Float32Array;
 
   /**
-   * Convert pcm to wav.
+   * Convert RAW to PCM.
+   * @param bytes
+   * @param sampleBits
+   */
+  function encodeToPCM (bytes: Float32Array, sampleBits: number): ArrayBuffer
+
+  /**
+   * Convert RAW to WAV.
    * @param bytes
    * @param sampleBits
    * @param sampleRate
    */
-  function encodeWAV(bytes: Float32Array, sampleBits: number, sampleRate: number): Blob;
+  function encodeWAV (bytes: Float32Array, sampleBits: number, sampleRate: number): Blob;
 }

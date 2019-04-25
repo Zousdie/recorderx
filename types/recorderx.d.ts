@@ -1,27 +1,30 @@
-import { RECORDER_STATE } from './state';
+import { RECORDER_STATE, ENCODE_TYPE } from './enum';
 
 export interface RecorderxConstructorOptions {
-  recordable?: boolean;
-  sampleRate?: number;
-  sampleBits?: number;
-  bufferSize?: number;
-  numberOfInputChannels?: number;
-  numberOfOutputChannels?: number;
+  recordable?: boolean
+  bufferSize?: number
+  sampleRate?: number
+  sampleBits?: number
 }
 
-export interface Recorderx {
+export default interface Recorderx {
   /**
-   * Recorder State.
+   * Recorder State
    */
-  state: RECORDER_STATE;
+  readonly state: RECORDER_STATE;
 
   /**
-   * Start recording.
-   * @param callback Callback function for onaudioprocess event.
+   * AudioContext
    */
-  start (
-    callback?: (param?: { data: Float32Array; result: Float32Array; wav: Blob }) => void,
-  ): Promise<MediaStream | Error>;
+  readonly ctx: AudioContext;
+
+  new({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions): Recorderx;
+
+  /**
+   * Start recording
+   * @param callback Callback function for onaudioprocess event
+   */
+  start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>;
 
   /**
    * Pause recording.
@@ -29,37 +32,22 @@ export interface Recorderx {
   pause (): void;
 
   /**
-   * Stop recording and turn off the audio context.
-   * This method is equivalent to destroying the current Recorder instance.
-   */
-  close (): void;
-
-  /**
    * Clear recording buffer.
    */
   clear (): void;
 
   /**
-   * Get recording data.
-   * @param param
-   * @param param.encodeTo String 'wav' or a function for processing audio data.
-   * @param param.compressable Whether to compress. Force compression on wav format.
+   * Get RAW recording data.
    */
-  getRecord (param?: { encodeTo?: Function | string; compressable: boolean }): Float32Array | Blob;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Float32Array;
+
+  /**
+   * Get PCM recording data.
+   */
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): ArrayBuffer;
+
+  /**
+   * Get WAV recording data.
+   */
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Blob;
 }
-
-export interface RecorderxConstructor {
-  new({
-    recordable,
-    sampleRate,
-    sampleBits,
-    bufferSize,
-    numberOfInputChannels,
-    numberOfOutputChannels,
-  }
-    ?: RecorderxConstructorOptions): Recorderx;
-}
-
-declare let Recorderx: RecorderxConstructor;
-
-export default Recorderx;

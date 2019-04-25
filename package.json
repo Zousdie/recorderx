@@ -14,8 +14,11 @@
     "url": "https://github.com/Zousdie/recorderx.git"
   },
   "scripts": {
-    "build": "rollup -c",
-    "prebuild": "rm -rf dist & rm -rf lib & rm -rf esm & rm -rf demo",
+    "dev": "rollup -c build/rollup.dev.js --environment NODE_ENV:development,BABEL_MODULE:umd --watch",
+    "build:lib": "rollup -c build/rollup.config.js --environment NODE_ENV:production",
+    "build:umd": "rollup -c build/rollup.config.js --environment NODE_ENV:production,BABEL_MODULE:umd",
+    "build": "npm run build:lib && npm run build:umd",
+    "prebuild": "rm -rf dist & rm -rf lib & rm -rf esm",
     "prepublish": "npm run build"
   },
   "main": "lib/index.js",
@@ -28,11 +31,13 @@
     "types",
     "demo"
   ],
+  "sideEffects": false,
   "dependencies": {
     "@babel/runtime": "^7.4.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "babel-eslint": "^10.0.1",
@@ -44,6 +49,8 @@
     "rollup-plugin-buble": "^0.19.6",
     "rollup-plugin-eslint": "^5.1.0",
     "rollup-plugin-fill-html": "^1.1.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-serve": "^1.0.1",
     "rollup-plugin-uglify": "^6.0.2"
   }
 }

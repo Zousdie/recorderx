@@ -1,20 +1,20 @@
 # recorderx
 
-Record and export audio in the browser via WebRTC api.
+基于 WebRTC api 的浏览器录音工具库
 
-Support output raw, pcm and wav format.
+支持导出 WAV、PCM、RAW 格式
 
-Support Typescript.
+支持 Typescript.
 
 <hr>
 
-English | [简体中文](./README-zh_CN.md)
+[English](./README.md) | 简体中文
 
-## Check your browser
+## 检查你的浏览器是否支持录音
 
 [Demo](https://zousdie.github.io/recorderx/demo/)
 
-## Install
+## 安装
 
 ### NPM
 
@@ -28,14 +28,14 @@ npm install recorderx --sava
 yarn add recorderx
 ```
 
-## Quick Start
+## 快速上手
 
 ```javascript
 import Recorderx, { ENCODE_TYPE } from "recorderx";
 
 const rc = new Recorderx();
 
-// start recorderx
+// 开始录音
 rc.start()
   .then(() => {
     console.log("start recording");
@@ -44,46 +44,46 @@ rc.start()
     console.log("Recording failed.", error);
   });
 
-// pause recorderx
+// 暂停
 rc.pause();
 
-// get wav, a Blob
+// 导出 wav
 var wav = rc.getRecord({
   encodeTo: ENCODE_TYPE.WAV,
   compressible: true
 });
 
-// get wav, but disable compression
+// 导出 wav, 并禁用压缩，这样导出的音频文件体积很大，其采样率由录音设备决定
 var wav = rc.getRecord({
   encodeTo: ENCODE_TYPE.WAV
 });
 ```
 
-## Usage
+## 使用
 
-### Recorderx constructor
+### Recorderx 构造函数
 
-Creates a recorderx instance
+创建实例
 
 - `recordable: boolean`
 
-  Whether to support continuous recording, default to `true`.
+  是否支持录制, 默认为 `true`.
 
 - `sampleRate: number`
 
-  Wav sampling rate, default to `16000`.
+  WAV 采样率, 默认为 `16000`, 推荐使用 `16000`.
 
 - `sampleBits: number`
 
-  Wav sampling bits, default to `16`.
+  WAV 音频深度, 默认为 `16`.
 
-  Optional value: `16` or `8`
+  可选值: `16` or `8`
 
 - `bufferSize: number`
 
-  The buffer size in units of sample-frames, default to `16384`.
+  缓冲区大小，以样本帧为单位, 默认为 `16384`.
 
-  Optional value: `256`, `512`, `1024`, `2048`, `4096`, `8192`, `16384`.
+  可选值: `256`, `512`, `1024`, `2048`, `4096`, `8192`, `16384`.
 
 ```typescript
 interface RecorderxConstructorOptions {
@@ -96,9 +96,9 @@ interface RecorderxConstructorOptions {
 new({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions): Recorderx;
 ```
 
-### Recorderx property
+### Recorderx 实例属性
 
-recorder state
+recorder 实例状态
 
 ```typescript
 enum RECORDER_STATE {
@@ -109,51 +109,55 @@ enum RECORDER_STATE {
 readonly state: RECORDER_STATE;
 ```
 
-AudioContext instance
+AudioContext 实例
 
 ```typescript
 readonly ctx: AudioContext;
 ```
 
-### Recorderx methods
+### Recorderx 方法
 
-start recording
+开始录制
 
-`audioprocessCallback`: The onaudioprocess event handler of the ScriptProcessorNode, refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess)
+`audioprocessCallback`: ScriptProcessorNode 的 onaudioprocess 事件回调函数，参考 [MDN](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess)
 
-`data` is current frame audio data
+`data` 当前帧的音频数据
 
-You can do special processing on the audio data of each frame in this callback function
+你可以在这个回调中对每一帧的音频数据做特殊处理，例如通过 WebSocket 进行实时音频传输
 
 ```typescript
 start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>;
 ```
 
-pause recording
+暂停
 
 ```typescript
 pause (): void;
 ```
 
-clear recording buffer
+清除录音缓存
 
 ```typescript
 clear (): void;
 ```
 
-get recording data
+获取录音数据
 
-Support for exporting WAV, PCM, RAW
+支持导出 WAV, PCM, RAW
 
 - `encodeTo: ENCODE_TYPE`
 
-  Export format, default to `RAW`.
+  导出的格式，一个枚举类型， 默认为 `RAW`.
 
 - `compressible: boolean`
 
-  Whether to enable compression, default to `false`.
+  是否启用压缩, 默认为 `false`，即禁用压缩.
 
-  **If compression is disabled, the sample rate of the exported audio data will depend on your recording device, not the sampleRate passed in when you instantiate the Recorderx**
+  **如果禁用压缩，导出的音频数据的采样率将取决于您的录制设备，而不是实例化 Recorderx 时传入的 sampleRate**
+
+  **如果启用压缩，导出的 WAV, PCM, RAW 将都是被压缩的数据**
+
+  **压缩算法基于线性抽值，在某些采样率下会失真**
 
 ```typescript
 enum ENCODE_TYPE {
@@ -178,13 +182,13 @@ audioTools.encodeToWAV();
 */
 ```
 
-Merge Float32Array
+合并多个 Float32Array
 
 ```typescript
 function merge(bufferList: Array<Float32Array>, size: number): Float32Array;
 ```
 
-Compress Float32Array
+对 Float32Array 数据进行线性压缩
 
 ```typescript
 function compress(
@@ -194,13 +198,13 @@ function compress(
 ): Float32Array;
 ```
 
-Convert to PCM
+转换为 PCM
 
 ```typescript
 function encodeToPCM(bytes: Float32Array, sampleBits: number): ArrayBuffer;
 ```
 
-Convert to WAV
+转换为 WAV
 
 ```typescript
 function encodeWAV(
@@ -210,16 +214,18 @@ function encodeWAV(
 ): Blob;
 ```
 
-## Browser Support
+## 浏览器支持
 
-All browsers that implement `getUserMedia`.
+支持所有支持 `getUserMedia` 方法的浏览器.
 
-For details, please refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
+不支持微信浏览器，IOS 下仅支持 Safari
+
+详细信息请参考 [MDN](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
 
 ## License
 
 MIT
 
-## Else
+## 其他
 
-Audio compression and conversion to wav method reference from [recording](https://github.com/silenceboychen/recording.git).
+音频压缩参考自 [recording](https://github.com/silenceboychen/recording.git).
