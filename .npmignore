@@ -1,8 +1,0 @@
-node_modules
-src
-.DS_Store
-.editorconfig
-.eslintignore
-.eslintrc
-.gitignore
-rollup.config.js
