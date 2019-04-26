@@ -7,7 +7,7 @@ export enum RECORDER_STATE {
 }
 
 export enum ENCODE_TYPE {
-  RAW,
-  PCM,
-  WAV
+  RAW = 'raw',
+  PCM = 'pcm',
+  WAV = 'wav'
 }
