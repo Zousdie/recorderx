@@ -6,7 +6,7 @@ Support output raw, pcm and wav format.
 
 Support Typescript.
 
-<hr>
+---
 
 English | [简体中文](./README-zh_CN.md)
 
@@ -50,12 +50,12 @@ rc.pause();
 // get wav, a Blob
 var wav = rc.getRecord({
   encodeTo: ENCODE_TYPE.WAV,
-  compressible: true
+  compressible: true,
 });
 
 // get wav, but disable compression
 var wav = rc.getRecord({
-  encodeTo: ENCODE_TYPE.WAV
+  encodeTo: ENCODE_TYPE.WAV,
 });
 ```
 
@@ -93,7 +93,7 @@ interface RecorderxConstructorOptions {
   sampleBits?: number
 }
 
-new({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions): Recorderx;
+constructor ({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions)
 ```
 
 ### Recorderx property
@@ -106,13 +106,13 @@ enum RECORDER_STATE {
   RECORDING
 }
 
-readonly state: RECORDER_STATE;
+readonly state: RECORDER_STATE
 ```
 
 AudioContext instance
 
 ```typescript
-readonly ctx: AudioContext;
+readonly ctx: AudioContext
 ```
 
 ### Recorderx methods
@@ -121,24 +121,24 @@ start recording
 
 `audioprocessCallback`: The onaudioprocess event handler of the ScriptProcessorNode, refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess)
 
-`data` is current frame audio data
+`data`: current frame audio data
 
 You can do special processing on the audio data of each frame in this callback function
 
 ```typescript
-start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>;
+start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>
 ```
 
 pause recording
 
 ```typescript
-pause (): void;
+pause (): void
 ```
 
 clear recording buffer
 
 ```typescript
-clear (): void;
+clear (): void
 ```
 
 get recording data
@@ -153,16 +153,33 @@ Support for exporting WAV, PCM, RAW
 
   Whether to enable compression, default to `false`.
 
-  **If compression is disabled, the sample rate of the exported audio data will depend on your recording device, not the sampleRate passed in when you instantiate the Recorderx**
+  - **If compression is enabled, the exported WAV, PCM, RAW will be compressed data, and the audio sample rate is the `sampleRate` passed in when the `Recorderx` is instantiated.**
+
+  - **If compression is enabled, the exported WAV, PCM, RAW will be compressed data, and the audio sample rate is the `sampleRate` passed in when the `Recorderx` is instantiated.**
+
+  - **The compression algorithm is based on linear extraction and is distorted at some sample rates.**
 
 ```typescript
 enum ENCODE_TYPE {
-  RAW,
-  PCM,
-  WAV
+  RAW = 'raw',
+  PCM = 'pcm',
+  WAV = 'wav'
 }
 
-getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Float32Array | ArrayBuffer | Blob;
+/**
+ * Get RAW recording data.
+ */
+getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.RAW, compressible?: boolean }): Float32Array
+
+/**
+ * Get PCM recording data.
+ */
+getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.PCM, compressible?: boolean }): ArrayBuffer
+
+/**
+ * Get WAV recording data.
+ */
+getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.WAV, compressible?: boolean }): Blob
 ```
 
 ### Audio Tools
@@ -181,38 +198,32 @@ audioTools.encodeToWAV();
 Merge Float32Array
 
 ```typescript
-function merge(bufferList: Array<Float32Array>, size: number): Float32Array;
+function merge (bufferList: Array<Float32Array>, length: number): Float32Array
 ```
 
 Compress Float32Array
 
 ```typescript
-function compress(
-  buffer: Float32Array,
-  inputSampleRate: number,
-  outputSampleRate: number
-): Float32Array;
+function compress (buffer: Float32Array, inputSampleRate: number, outputSampleRate: number): Float32Array
 ```
 
 Convert to PCM
 
 ```typescript
-function encodeToPCM(bytes: Float32Array, sampleBits: number): ArrayBuffer;
+function encodeToPCM (bytes: Float32Array, sampleBits: number): ArrayBuffer
 ```
 
 Convert to WAV
 
 ```typescript
-function encodeWAV(
-  bytes: Float32Array,
-  sampleBits: number,
-  sampleRate: number
-): Blob;
+function encodeToWAV (bytes: Float32Array, sampleBits: number, sampleRate: number): Blob
 ```
 
 ## Browser Support
 
 All browsers that implement `getUserMedia`.
+
+WeChat browser is not supported, only Safari is supported under IOS.
 
 For details, please refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
 

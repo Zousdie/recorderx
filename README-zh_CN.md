@@ -6,7 +6,7 @@
 
 支持 Typescript.
 
-<hr>
+---
 
 [English](./README.md) | 简体中文
 
@@ -35,7 +35,7 @@ import Recorderx, { ENCODE_TYPE } from "recorderx";
 
 const rc = new Recorderx();
 
-// 开始录音
+// start recorderx
 rc.start()
   .then(() => {
     console.log("start recording");
@@ -44,18 +44,18 @@ rc.start()
     console.log("Recording failed.", error);
   });
 
-// 暂停
+// pause recorderx
 rc.pause();
 
-// 导出 wav
+// get wav, a Blob
 var wav = rc.getRecord({
   encodeTo: ENCODE_TYPE.WAV,
-  compressible: true
+  compressible: true,
 });
 
-// 导出 wav, 并禁用压缩，这样导出的音频文件体积很大，其采样率由录音设备决定
+// get wav, but disable compression
 var wav = rc.getRecord({
-  encodeTo: ENCODE_TYPE.WAV
+  encodeTo: ENCODE_TYPE.WAV,
 });
 ```
 
@@ -93,7 +93,7 @@ interface RecorderxConstructorOptions {
   sampleBits?: number
 }
 
-new({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions): Recorderx;
+constructor ({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions)
 ```
 
 ### Recorderx 实例属性
@@ -106,13 +106,13 @@ enum RECORDER_STATE {
   RECORDING
 }
 
-readonly state: RECORDER_STATE;
+readonly state: RECORDER_STATE
 ```
 
 AudioContext 实例
 
 ```typescript
-readonly ctx: AudioContext;
+readonly ctx: AudioContext
 ```
 
 ### Recorderx 方法
@@ -121,29 +121,27 @@ readonly ctx: AudioContext;
 
 `audioprocessCallback`: ScriptProcessorNode 的 onaudioprocess 事件回调函数，参考 [MDN](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode/onaudioprocess)
 
-`data` 当前帧的音频数据
+`data`: 当前帧的音频数据
 
 你可以在这个回调中对每一帧的音频数据做特殊处理，例如通过 WebSocket 进行实时音频传输
 
 ```typescript
-start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>;
+start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>
 ```
 
 暂停
 
 ```typescript
-pause (): void;
+pause (): void
 ```
 
 清除录音缓存
 
 ```typescript
-clear (): void;
+clear (): void
 ```
 
-获取录音数据
-
-支持导出 WAV, PCM, RAW
+获取录音数据，支持导出 WAV, PCM, RAW
 
 - `encodeTo: ENCODE_TYPE`
 
@@ -153,20 +151,33 @@ clear (): void;
 
   是否启用压缩, 默认为 `false`，即禁用压缩.
 
-  **如果禁用压缩，导出的音频数据的采样率将取决于您的录制设备，而不是实例化 Recorderx 时传入的 sampleRate**
+  - **如果启用压缩，则导出的 WAV, PCM, RAW 将都是被压缩的数据，音频采样率为实例化 `Recorderx` 时传入的 `sampleRate`**
 
-  **如果启用压缩，导出的 WAV, PCM, RAW 将都是被压缩的数据**
+  - **如果禁用压缩，则导出的音频数据的采样率将取决于您的录音设备（一般为 48000 或 44100），而不是在实例化 `Recorderx` 时传入的 `sampleRate`**
 
-  **压缩算法基于线性抽值，在某些采样率下会失真**
+  - **压缩算法基于线性抽值，在某些采样率下会失真**
 
 ```typescript
 enum ENCODE_TYPE {
-  RAW,
-  PCM,
-  WAV
+  RAW = 'raw',
+  PCM = 'pcm',
+  WAV = 'wav'
 }
 
-getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Float32Array | ArrayBuffer | Blob;
+/**
+ * Get RAW recording data.
+ */
+getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.RAW, compressible?: boolean }): Float32Array
+
+/**
+ * Get PCM recording data.
+ */
+getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.PCM, compressible?: boolean }): ArrayBuffer
+
+/**
+ * Get WAV recording data.
+ */
+getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.WAV, compressible?: boolean }): Blob
 ```
 
 ### Audio Tools
@@ -185,38 +196,30 @@ audioTools.encodeToWAV();
 合并多个 Float32Array
 
 ```typescript
-function merge(bufferList: Array<Float32Array>, size: number): Float32Array;
+function merge (bufferList: Array<Float32Array>, length: number): Float32Array
 ```
 
 对 Float32Array 数据进行线性压缩
 
 ```typescript
-function compress(
-  buffer: Float32Array,
-  inputSampleRate: number,
-  outputSampleRate: number
-): Float32Array;
+function compress (buffer: Float32Array, inputSampleRate: number, outputSampleRate: number): Float32Array
 ```
 
 转换为 PCM
 
 ```typescript
-function encodeToPCM(bytes: Float32Array, sampleBits: number): ArrayBuffer;
+function encodeToPCM (bytes: Float32Array, sampleBits: number): ArrayBuffer
 ```
 
 转换为 WAV
 
 ```typescript
-function encodeWAV(
-  bytes: Float32Array,
-  sampleBits: number,
-  sampleRate: number
-): Blob;
+function encodeToWAV (bytes: Float32Array, sampleBits: number, sampleRate: number): Blob
 ```
 
 ## 浏览器支持
 
-支持所有支持 `getUserMedia` 方法的浏览器.
+支持所有支持 `getUserMedia` 方法的浏览器
 
 不支持微信浏览器，IOS 下仅支持 Safari
 
