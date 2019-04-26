@@ -7,7 +7,7 @@ export namespace audioTools {
    * @param bufferList
    * @param length
    */
-  function merge (bufferList: Array<Float32Array>, size: number): Float32Array;
+  function merge (bufferList: Array<Float32Array>, length: number): Float32Array
 
   /**
    * Compression audio data.
@@ -15,7 +15,7 @@ export namespace audioTools {
    * @param inputSampleRate
    * @param outputSampleRate
    */
-  function compress (buffer: Float32Array, inputSampleRate: number, outputSampleRate: number): Float32Array;
+  function compress (buffer: Float32Array, inputSampleRate: number, outputSampleRate: number): Float32Array
 
   /**
    * Convert RAW to PCM.
@@ -30,5 +30,5 @@ export namespace audioTools {
    * @param sampleBits
    * @param sampleRate
    */
-  function encodeWAV (bytes: Float32Array, sampleBits: number, sampleRate: number): Blob;
+  function encodeToWAV (bytes: Float32Array, sampleBits: number, sampleRate: number): Blob
 }

@@ -4,7 +4,7 @@ export const RECORDER_STATE = {
 };
 
 export const ENCODE_TYPE = {
-  RAW: 0,
-  PCM: 1,
-  WAV: 2,
+  RAW: 'raw',
+  PCM: 'pcm',
+  WAV: 'wav',
 };

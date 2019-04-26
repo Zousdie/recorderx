@@ -7,47 +7,47 @@ export interface RecorderxConstructorOptions {
   sampleBits?: number
 }
 
-export default interface Recorderx {
+export default class Recorderx {
   /**
    * Recorder State
    */
-  readonly state: RECORDER_STATE;
+  readonly state: RECORDER_STATE
 
   /**
    * AudioContext
    */
-  readonly ctx: AudioContext;
+  readonly ctx: AudioContext
 
-  new({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions): Recorderx;
+  constructor ({ recordable, bufferSize, sampleRate, sampleBits }?: RecorderxConstructorOptions)
 
   /**
    * Start recording
    * @param callback Callback function for onaudioprocess event
    */
-  start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>;
+  start (audioprocessCallback?: (data: Float32Array) => any): Promise<MediaStream>
 
   /**
    * Pause recording.
    */
-  pause (): void;
+  pause (): void
 
   /**
    * Clear recording buffer.
    */
-  clear (): void;
+  clear (): void
 
   /**
    * Get RAW recording data.
    */
-  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Float32Array;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.RAW, compressible?: boolean }): Float32Array
 
   /**
    * Get PCM recording data.
    */
-  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): ArrayBuffer;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.PCM, compressible?: boolean }): ArrayBuffer
 
   /**
    * Get WAV recording data.
    */
-  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE, compressible?: boolean }): Blob;
+  getRecord ({ encodeTo, compressible }?: { encodeTo?: ENCODE_TYPE.WAV, compressible?: boolean }): Blob
 }
