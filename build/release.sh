@@ -24,15 +24,15 @@ git add .
 
 git commit -m "release: $VERSION"
 
+npm publish
+
 git tag "$VERSION"
 
 git push
 
 git push origin --tags
 
-npm run build
-
-npm publish
+npm run gh
 
 git checkout dev
 
