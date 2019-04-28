@@ -12,7 +12,7 @@
 
 ## 检查你的浏览器是否支持录音
 
-[Demo](https://zousdie.github.io/recorderx/dist/)
+[Demo](https://zousdie.github.io/recorderx/)
 
 ## 安装
 
@@ -50,12 +50,12 @@ rc.pause();
 // get wav, a Blob
 var wav = rc.getRecord({
   encodeTo: ENCODE_TYPE.WAV,
-  compressible: true,
+  compressible: true
 });
 
 // get wav, but disable compression
 var wav = rc.getRecord({
-  encodeTo: ENCODE_TYPE.WAV,
+  encodeTo: ENCODE_TYPE.WAV
 });
 ```
 
@@ -196,25 +196,33 @@ audioTools.encodeToWAV();
 合并多个 Float32Array
 
 ```typescript
-function merge (bufferList: Array<Float32Array>, length: number): Float32Array
+function merge(bufferList: Array<Float32Array>, length: number): Float32Array;
 ```
 
 对 Float32Array 数据进行线性压缩
 
 ```typescript
-function compress (buffer: Float32Array, inputSampleRate: number, outputSampleRate: number): Float32Array
+function compress(
+  buffer: Float32Array,
+  inputSampleRate: number,
+  outputSampleRate: number
+): Float32Array;
 ```
 
 转换为 PCM
 
 ```typescript
-function encodeToPCM (bytes: Float32Array, sampleBits: number): ArrayBuffer
+function encodeToPCM(bytes: Float32Array, sampleBits: number): ArrayBuffer;
 ```
 
 转换为 WAV
 
 ```typescript
-function encodeToWAV (bytes: Float32Array, sampleBits: number, sampleRate: number): Blob
+function encodeToWAV(
+  bytes: Float32Array,
+  sampleBits: number,
+  sampleRate: number
+): Blob;
 ```
 
 ## 浏览器支持
