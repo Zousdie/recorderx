@@ -1,6 +1,6 @@
 {
   "name": "recorderx",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Record and export audio in the browser via WebRTC api",
   "author": "Jialiang T. (rememhe@outlook.com)",
   "keywords": [
